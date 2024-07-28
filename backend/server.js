@@ -2,14 +2,20 @@ import express from "express";
 import connectDB from "./config/connectDB.js";
 import dotenv from "dotenv";
 import {fileURLToPath} from "url";
-import {dirname} from "path";
+import {dirname, resolve} from "path";
+import userRouter from "./routes/userRouter.js";
+import complaintRouter from "./routes/complaintRouter.js";
 
 // configuring path to environment variables
 const __filename = fileURLToPath(import.meta.url); // points to current file
 const __dirname = dirname(__filename); // points to the current directory
-dotenv.config({path: __dirname})
+dotenv.config({path: resolve(__dirname,"../.env")})
 
 const app = express();
+
+// Routers
+app.use("/api/users", userRouter)
+app.use("/api/complaints", complaintRouter)
 
 const port = process.env.PORT || 3000;
 
@@ -18,12 +24,15 @@ connectDB()
     app.listen(port, () => {
         console.log(`Server running on port ${port}.`)
     })
+})
+.catch(error => {
+    console.log(error)
 });
 
-app.get("/", (req,res) => {
-    res.send("Server running here.")
-});
+// app.get("/", (req,res) => {
+//     res.send("Server running here.")
+// });
 
-app.get("/list", (req,res) => {
-    res.send("This is the page of list route.")
-});
+// app.get("/list", (req,res) => {
+//     res.send("This is the page of list route.")
+// });
