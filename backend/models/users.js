@@ -29,6 +29,12 @@ const userSchema = new mongoose.Schema({
     room_no: {
         type: Number,
         required: true
+    },
+    hashedPassword: {
+        type: String,
+        unique: true,
+        minlength: 8,
+        required: true
     }
 });
 

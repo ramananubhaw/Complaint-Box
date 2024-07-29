@@ -12,6 +12,7 @@ const __dirname = dirname(__filename); // points to the current directory
 dotenv.config({path: resolve(__dirname,"../.env")})
 
 const app = express();
+app.use(express.json());
 
 // Routers
 app.use("/api/users", userRouter)
@@ -29,9 +30,9 @@ connectDB()
     console.log(error)
 });
 
-// app.get("/", (req,res) => {
-//     res.send("Server running here.")
-// });
+app.get("/", (req,res) => {
+    res.send("Server running here.")
+});
 
 // app.get("/list", (req,res) => {
 //     res.send("This is the page of list route.")
