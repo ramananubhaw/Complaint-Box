@@ -14,6 +14,7 @@ const getUser = async (req,res) => {
     }
     catch(error) {
         console.log(error);
+        res.status(500).send("Internal server error.");
         throw error;
     }
 };
@@ -33,7 +34,8 @@ const registerUser = async (req,res) => {
         res.status(201).send("User registered successfully.");
     }
     catch(error) {
-        res.send(error);
+        console.log(error);
+        res.status(500).send("Internal server error.");
         throw error;
     }
 };
@@ -55,6 +57,7 @@ const loginUser = async (req,res) => {
     }
     catch(error) {
         console.log(error);
+        res.status(500).send("Internal server error.");
         throw error;
     }
 };
@@ -76,6 +79,7 @@ const deleteUser = async (req,res) => {
     }
     catch(error) {
         console.log(error);
+        res.status(500).send("Internal server error.");
         throw error;
     }
 };
@@ -93,6 +97,7 @@ const updateUser = async (req,res) => {
     }
     catch(error) {
         console.log(error);
+        res.status(500).send("Internal server error.");
         throw error;
     }
 };

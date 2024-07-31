@@ -3,6 +3,7 @@ import connectDB from "./config/connectDB.js";
 import dotenv from "dotenv";
 import {fileURLToPath} from "url";
 import {dirname, resolve} from "path";
+import cookieParser from "cookie-parser";
 import userRouter from "./routes/userRouter.js";
 import complaintRouter from "./routes/complaintRouter.js";
 
@@ -13,6 +14,7 @@ dotenv.config({path: resolve(__dirname,"../.env")})
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser())
 
 // Routers
 app.use("/api/users", userRouter)
@@ -31,6 +33,8 @@ connectDB()
 });
 
 app.get("/", (req,res) => {
+    // res.cookie("testcookie", "1", {expires: new Date(Date.now() + 60000)});
+    res.cookie("testcookie", "1", {maxAge: 60000});
     res.send("Server running here.")
 });
 
