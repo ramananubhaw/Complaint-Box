@@ -1,8 +1,8 @@
 import express from "express";
 import connectDB from "./config/connectDB.js";
 import dotenv from "dotenv";
-import {fileURLToPath} from "url";
-import {dirname, resolve} from "path";
+import {fileURLToPath} from "url"; // dirname
+import {dirname, resolve} from "path"; // dirname
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/userRouter.js";
 import complaintRouter from "./routes/complaintRouter.js";
@@ -14,13 +14,25 @@ dotenv.config({path: resolve(__dirname,"../.env")})
 
 const app = express();
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+// app.use(session({
+//     saveUninitialized: false,
+//     resave: false,
+//     secret: process.env.SECRET,
+//     cookie: {
+//         maxAge: 30000 
+//     }
+// }))
 
-// Routers
+// Setting up the routers
 app.use("/api/users", userRouter)
 app.use("/api/complaints", complaintRouter)
 
 const port = process.env.PORT || 3000;
+
+app.get("/", (req,res) => {
+    res.send("Server running here.")
+});
 
 connectDB()
 .then(() => {
@@ -30,12 +42,6 @@ connectDB()
 })
 .catch(error => {
     console.log(error)
-});
-
-app.get("/", (req,res) => {
-    // res.cookie("testcookie", "1", {expires: new Date(Date.now() + 60000)});
-    res.cookie("testcookie", "1", {maxAge: 60000});
-    res.send("Server running here.")
 });
 
 // app.get("/list", (req,res) => {
