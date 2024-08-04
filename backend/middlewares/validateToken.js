@@ -1,5 +1,3 @@
-// Improve this code, not linked to userController right now.
-
 import jwt from "jsonwebtoken";
 
 const validateToken = (req, res, next) => {
