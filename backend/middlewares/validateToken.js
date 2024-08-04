@@ -2,22 +2,20 @@
 
 import jwt from "jsonwebtoken";
 
-const validateToken = (req) => {
+const validateToken = (req, res, next) => {
     if (!req.cookies || !req.cookies.access_token) {
-        throw new Error("Authorization cookie expired.");
+        res.status(401).json({message: "Token expired."});
+        return;
     }
-    if (req.cookies) {
-        const token = req.cookies["access_token"];
-        jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, (error, decoded) => {
-            if (error) {
-                console.log("Authorization failed");
-                return false;
-            }
-            console.log(decoded);
-            return true;
-        });
-    }
-    return false;
+    const token = req.cookies.access_token;
+    console.log(token);
+    jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, (error, decoded) => {
+        if (error){
+            res.status(401).json({message: "Authorization failed."});
+            return;
+        }
+        next(decoded);
+    });
 };
 
 /*

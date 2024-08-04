@@ -2,10 +2,11 @@ import users from "../models/users.js";
 import hashPassword from "../utils/hashPassword.js";
 import verifyPassword from "../utils/verifyPassword.js";
 import jwt from "jsonwebtoken";
-// import validateToken from "../middlewares/validateToken.js";
+import validateToken from "../middlewares/validateToken.js";
 
 // @method GET
 // @route /api/users/details/:reg_no
+// @access PRIVATE (admin)
 const getUser = async (req,res) => {
     try {
         console.log(req.cookies);
@@ -26,6 +27,7 @@ const getUser = async (req,res) => {
 
 // @method POST
 // @route /api/users/register
+// @access PUBLIC (user)
 const registerUser = async (req,res) => {
     try {
         let {name, reg_no, email_id, phone_no, block, room_no, password} = req.body;
@@ -48,6 +50,7 @@ const registerUser = async (req,res) => {
 
 // @method POST
 // @route /api/users/login
+// @access PUBLIC (user)
 const loginUser = async (req,res) => {
     try {
         const {username, password} = req.body;
@@ -90,31 +93,46 @@ const loginUser = async (req,res) => {
 
 // @method GET
 // @route /api/users/current
+// @access PUBLIC (user)
 const currentUser = (req,res) => {
-    // console.log(req.cookies);
-    if (!req.cookies || !req.cookies.access_token) {
-        res.status(401).json({message: "Cookie expired."});
-        return;
+    try {
+        validateToken(req, res, async (decoded) => {
+            const username = decoded.user.username;
+            const user = await users.findOne({reg_no: username}).select({"_id":0, "hashedPassword":0, "__v":0})
+            res.status(200).json({
+                message: "User Authorized.",
+                user: user
+            });
+        })
     }
-    const token = req.cookies.access_token;
-    jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, async (error, decoded) => {
-        if (error) {
-            res.status(401).json({message: "Authorization failed."});
-            return;
-        }
-        // console.log(decoded);
-        const username = decoded.user.username;
-        const user = await users.findOne({reg_no: username}).select({"_id":0, "hashedPassword":0, "__v":0})
-        res.status(200).json({
-            message: "User Authorized.",
-            user: user
-        });
-    })
+    catch(error) {
+        console.log(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+    // console.log(req.cookies);
+    // if (!req.cookies || !req.cookies.access_token) {
+    //     res.status(401).json({message: "Cookie expired."});
+    //     return;
+    // }
+    // const token = req.cookies.access_token;
+    // jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, async (error, decoded) => {
+    //     if (error) {
+    //         res.status(401).json({message: "Authorization failed."});
+    //         return;
+    //     }
+    //     const username = decoded.user.username;
+    //     const user = await users.findOne({reg_no: username}).select({"_id":0, "hashedPassword":0, "__v":0})
+    //     res.status(200).json({
+    //         message: "User Authorized.",
+    //         user: user
+    //     });
+    // });
 };
 
 
 // @method DELETE
 // @route /api/users/delete/:reg_no
+// @access PRIVATE (admin)
 const deleteUser = async (req,res) => {
     try {
         const reg_no = req.params.reg_no;
@@ -134,6 +152,7 @@ const deleteUser = async (req,res) => {
 
 // @method PUT
 // @route /api/users/update/:reg_no
+// @access PUBLIC (user)
 const updateUser = async (req,res) => {
     try {
         const reg_no = req.params.reg_no;
@@ -148,7 +167,6 @@ const updateUser = async (req,res) => {
     catch(error) {
         console.log(error);
         res.status(500).json({message: "Internal server error."});
-        throw error;
     }
 };
 

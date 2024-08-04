@@ -43,7 +43,3 @@ connectDB()
 .catch(error => {
     console.log(error)
 });
-
-// app.get("/list", (req,res) => {
-//     res.send("This is the page of list route.")
-// });

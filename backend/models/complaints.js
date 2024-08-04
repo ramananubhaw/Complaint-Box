@@ -15,6 +15,11 @@ const complaintSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    category: {
+        type: String,
+        enum: ["electrical", "civil", "plumbing", "cleaning", "medical", "sanitation", "food", "laundry", "security", "ragging/bullying", "staff behaviour", "internet_connectivity", "other"],
+        required: true
+    },
     complaint: {
         type: String,
         maxlength: 100,
