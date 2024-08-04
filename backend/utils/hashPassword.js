@@ -14,15 +14,4 @@ const hashPassword = async (password) => {
     }
 }
 
-// let pwd;
-// hashPassword("ramanbhaiya")
-// .then((hash, pwd) => {
-//     pwd = hash;
-//     console.log("Hashed - ",hash);
-//     console.log("Ok - ", pwd)
-// })
-// .catch((error) => {
-//     console.log(error)
-// });
-
 export default hashPassword;
