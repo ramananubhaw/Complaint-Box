@@ -8,7 +8,7 @@ const validateToken = (req, res, next) => {
         return;
     }
     const token = req.cookies.access_token;
-    console.log(token);
+    // console.log(token);
     jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, (error, decoded) => {
         if (error){
             res.status(401).json({message: "Authorization failed."});
