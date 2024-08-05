@@ -179,7 +179,7 @@ const updateUser = (req,res) => {
                     continue;
                 }
                 same = false;
-                // console.log("Different" + key + ": " + user[key] + ", " + req.body[key]);
+                // console.log("Different - " + key + ": " + user[key] + ", " + req.body[key]);
                 break;
             }
             if (same) {
