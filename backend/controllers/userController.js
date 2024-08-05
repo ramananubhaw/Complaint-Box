@@ -173,20 +173,22 @@ const updateUser = (req,res) => {
                 return;
             }
             let same = true;
+            let update = {};
             for (const key of keys) {
                 if (user[key] === req.body[key]) {
                     // console.log("Same - " + key + ": " + user[key] + ", " + req.body[key]);
                     continue;
                 }
-                same = false;
                 // console.log("Different - " + key + ": " + user[key] + ", " + req.body[key]);
-                break;
+                same = false;
+                update[key] = req.body[key];
             }
             if (same) {
                 res.status(400).json({message: "Already up-to-date."});
                 return;
             }
-            const updatedUser = await users.findOneAndUpdate({reg_no: reg_no}, req.body, {new: true}).select({"_id":0, "hashedPassword":0, "__v":0});
+            console.log(update);
+            const updatedUser = await users.findOneAndUpdate({reg_no: reg_no}, update, {new: true}).select({"_id":0, "hashedPassword":0, "__v":0});
             res.status(200).json({message: "User data updated successfully.", user: updatedUser});
         })
     }
