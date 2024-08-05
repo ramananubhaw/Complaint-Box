@@ -1,6 +1,6 @@
 import users from "../models/users.js";
-import hashPassword from "../utils/hashPassword.js";
-import verifyPassword from "../utils/verifyPassword.js";
+import hashPassword from "../middlewares/hashPassword.js";
+import verifyPassword from "../middlewares/verifyPassword.js";
 import jwt from "jsonwebtoken";
 import validateToken from "../middlewares/validateToken.js";
 
@@ -100,7 +100,7 @@ const currentUser = (req,res) => {
             const username = decoded.user.username;
             const user = await users.findOne({reg_no: username}).select({"_id":0, "hashedPassword":0, "__v":0})
             res.status(200).json({
-                message: "User Authorized.",
+                message: "Current User details.",
                 user: user
             });
         })
@@ -151,18 +151,44 @@ const deleteUser = async (req,res) => {
 };
 
 // @method PUT
-// @route /api/users/update/:reg_no
+// @route /api/users/update
 // @access PUBLIC (user)
-const updateUser = async (req,res) => {
+const updateUser = (req,res) => {
     try {
-        const reg_no = req.params.reg_no;
-        const user = await users.findOne({reg_no: reg_no});
-        if (!user) {
-            res.status(404).json({message: "User not found."});
-            return;
-        }
-        const updatedUser = await users.findOneAndUpdate({reg_no: reg_no}, req.body, {new: true});
-        res.status(200).json({message: "User data updated successfully.", user: updatedUser});
+        validateToken(req, res, async (decoded) => {
+            if (req.body.password || req.body.reg_no) {
+                res.status(400).json({message: "Registration Number and Password cannot be updated here."});
+                return;
+            }
+            const reg_no = decoded.user.username;
+            const keys = Object.keys(req.body);
+            let projection = {};
+            keys.forEach((key) => {
+                projection[key] = 1
+            });
+            projection["_id"] = 0; // user cannot update user id.
+            const user = await users.findOne({reg_no: reg_no}).select(projection);
+            if (!user) {
+                res.status(404).json({message: "User not found."});
+                return;
+            }
+            let same = true;
+            for (const key of keys) {
+                if (user[key] === req.body[key]) {
+                    // console.log("Same - " + key + ": " + user[key] + ", " + req.body[key]);
+                    continue;
+                }
+                same = false;
+                // console.log("Different" + key + ": " + user[key] + ", " + req.body[key]);
+                break;
+            }
+            if (same) {
+                res.status(400).json({message: "Already up-to-date."});
+                return;
+            }
+            const updatedUser = await users.findOneAndUpdate({reg_no: reg_no}, req.body, {new: true}).select({"_id":0, "hashedPassword":0, "__v":0});
+            res.status(200).json({message: "User data updated successfully.", user: updatedUser});
+        })
     }
     catch(error) {
         console.log(error);

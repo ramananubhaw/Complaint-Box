@@ -8,6 +8,6 @@ userRouter.route("/register").post(registerUser);
 userRouter.route("/login").post(loginUser);
 userRouter.route("/current").get(currentUser);
 userRouter.route("/delete/:reg_no").delete(deleteUser);
-userRouter.route("/update/:reg_no").put(updateUser);
+userRouter.route("/update").put(updateUser);
 
 export default userRouter;

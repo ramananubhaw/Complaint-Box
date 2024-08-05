@@ -32,7 +32,7 @@ const registerComplaint = (req,res) => {
                 res.status(201).json({message: "Complaint registered successfully."});
                 return;
             }
-            res.status(400).json({message: "complaint already registered."});
+            res.status(400).json({message: "Complaint already registered."});
         });
     }
     catch(error) {
