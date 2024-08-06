@@ -28,6 +28,7 @@ const getUser = async (req,res) => {
 // @method POST
 // @route /api/users/register
 // @access PUBLIC (user)
+// @request body {name, reg_no, email_id, phone_no, block, room_no, password}
 const registerUser = async (req,res) => {
     try {
         let {name, reg_no, email_id, phone_no, block, room_no, password} = req.body;
@@ -51,6 +52,7 @@ const registerUser = async (req,res) => {
 // @method POST
 // @route /api/users/login
 // @access PUBLIC (user)
+// @request body {username, password}
 const loginUser = async (req,res) => {
     try {
         const {username, password} = req.body;
@@ -153,6 +155,7 @@ const deleteUser = async (req,res) => {
 // @method PUT
 // @route /api/users/update
 // @access PUBLIC (user)
+// @request body {fields to be updated}
 const updateUser = (req,res) => {
     try {
         validateToken(req, res, async (decoded) => {

@@ -17,6 +17,7 @@ const getComplaint = (req,res) => {
 // @method POST
 // @route /api/complaints/register
 // @access PUBLIC (user)
+// @request body {category, complaint}
 const registerComplaint = (req,res) => {
     try {
         validateToken(req,res, async (decoded) => {
@@ -43,14 +44,37 @@ const registerComplaint = (req,res) => {
 
 // @method DELETE
 // @route /api/complaints/delete/:reg_no
+// @access PRIVATE (admin)
 const deleteComplaint = (req,res) => {
     res.send("Complaint deleted successfully.")
 };
 
 // @method PUT
-// @route /api/complaints/update/:reg_no
-const updateComplaint = (req,res) => {
-    res.send("Complaint updated successfully")
+// @route /api/complaints/update
+// @access PUBLIC (user)
+// @request body {complaint_id}
+const updateComplaintStatus = (req,res) => {
+    try {
+        validateToken(req, res, async (decoded) => {
+            const user_id = decoded.user.id;
+            const complaint_id = req.body.complaint_id;
+            const complaint = await complaints.findOne({user_id: user_id, _id: complaint_id});
+            if (!complaint) {
+                res.status(400).json({message: "Complaint could not be found."});
+                return;
+            }
+            if (complaint.status=="solved") {
+                res.status(400).json({message: "Complaint already solved."});
+                return;
+            }
+            const updatedComplaint = await complaints.findOneAndUpdate({user_id: user_id, _id: complaint_id}, {status: "solved"}, {new: true});
+            res.status(200).json({message: "Complaint updated successfully.", complaint: updatedComplaint})
+        })
+    }
+    catch(error) {
+        console.log(error);
+        res.status(500).json({message: "Internal server error."});
+    }
 };
 
-export {getAllComplaints, getComplaint, registerComplaint, deleteComplaint, updateComplaint};
+export {getAllComplaints, getComplaint, registerComplaint, deleteComplaint, updateComplaintStatus};
