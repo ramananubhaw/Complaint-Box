@@ -6,6 +6,10 @@ const complaintSchema = new mongoose.Schema({
         ref: "users",
         required: true
     },
+    reg_no: {
+        type: String,
+        required: true,
+    },
     block: {
         type: String,
         maxlength: 2,

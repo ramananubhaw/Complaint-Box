@@ -3,8 +3,8 @@ import {getAllComplaints, getComplaint, registerComplaint, deleteComplaint, upda
 
 const complaintRouter = express.Router();
 
-complaintRouter.route("/details").get(getAllComplaints);
-complaintRouter.route("/details/:reg_no").get(getComplaint)
+complaintRouter.route("/details/all").get(getAllComplaints);
+complaintRouter.route("/details").get(getComplaint)
 complaintRouter.route("/register").post(registerComplaint);
 complaintRouter.route("/delete/:reg_no").delete(deleteComplaint);
 complaintRouter.route("/update").put(updateComplaintStatus);

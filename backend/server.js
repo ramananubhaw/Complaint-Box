@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import {fileURLToPath} from "url"; // dirname
 import {dirname, resolve} from "path"; // dirname
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import userRouter from "./routes/userRouter.js";
 import complaintRouter from "./routes/complaintRouter.js";
 
@@ -13,6 +14,7 @@ const __dirname = dirname(__filename); // points to the current directory
 dotenv.config({path: resolve(__dirname,"../.env")})
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 // app.use(session({
