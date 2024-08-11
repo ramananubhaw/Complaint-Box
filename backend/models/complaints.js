@@ -8,7 +8,7 @@ const complaintSchema = new mongoose.Schema({
     },
     reg_no: {
         type: String,
-        required: true,
+        required: true
     },
     block: {
         type: String,

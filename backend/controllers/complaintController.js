@@ -41,7 +41,7 @@ const registerComplaint = (req,res) => {
             const user_id = decoded.user.id;
             const reg_no = decoded.user.username;
             const user = await users.findOne({_id: user_id}).select({block:1, room_no:1});
-            console.log(user);
+            // console.log(user);
             const {category, complaint} = req.body;
             const check = await complaints.findOne({user_id: user_id, reg_no: reg_no, category: category, complaint: complaint, status: "pending"});
             if (!check) {

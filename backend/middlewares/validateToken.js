@@ -1,8 +1,14 @@
 import jwt from "jsonwebtoken";
 
 const validateToken = (req, res, next) => {
+    // console.log(req.path);
     if (!req.cookies || !req.cookies.access_token) {
-        res.status(401).json({message: "Token expired."});
+        if (req.path == "/logout") {
+            res.status(401).json({message: "Logged out already."});
+        }
+        else {
+            res.status(401).json({message: "Token expired."});
+        }
         return;
     }
     const token = req.cookies.access_token;
@@ -12,7 +18,12 @@ const validateToken = (req, res, next) => {
             res.status(401).json({message: "Authorization failed."});
             return;
         }
-        next(decoded);
+        if (req.path == "/logout") {
+            next();
+        }
+        else {
+            next(decoded);
+        }
     });
 };
 

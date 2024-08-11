@@ -77,13 +77,13 @@ const loginUser = async (req,res) => {
                 id: user._id
             }
         }, process.env.SECRET_ACCESS_TOKEN, {
-            expiresIn: "1m" // increase expiration time for JWT token in production
+            expiresIn: process.env.JWT_TOKEN_EXPIRY_TIME // increase expiration time for JWT token in production
         });
         res.cookie("access_token", accessToken, {
             // httpOnly: true,
             // secure: true,
             sameSite: "strict",
-            maxAge: 55000 // increase expiration time of cookie in production
+            maxAge: process.env.AUTHENTICATION_COOKIE_EXPIRY_TIME // increase expiration time of cookie in production
         }); // enable the httpOnly and secure flags in production
         res.status(200).json({message: "Logged in successfully."});
     }
@@ -91,6 +91,22 @@ const loginUser = async (req,res) => {
         console.log(error);
         res.status(500).json({message: "Internal server error."});
     }
+};
+
+// @method POST
+// @route /api/users/logout
+// @access PUBLIC (user)
+const logoutUser = (req,res) => {
+    validateToken(req, res, () => {
+        try {
+            res.clearCookie("access_token");
+            res.status(200).json({message: "Logged out successfully."});
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json({message: "Error logging out."});
+        }
+    })
 };
 
 // @method GET
@@ -111,24 +127,6 @@ const currentUser = (req,res) => {
         console.log(error);
         res.status(500).json({message: "Internal server error"});
     }
-    // console.log(req.cookies);
-    // if (!req.cookies || !req.cookies.access_token) {
-    //     res.status(401).json({message: "Cookie expired."});
-    //     return;
-    // }
-    // const token = req.cookies.access_token;
-    // jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, async (error, decoded) => {
-    //     if (error) {
-    //         res.status(401).json({message: "Authorization failed."});
-    //         return;
-    //     }
-    //     const username = decoded.user.username;
-    //     const user = await users.findOne({reg_no: username}).select({"_id":0, "hashedPassword":0, "__v":0})
-    //     res.status(200).json({
-    //         message: "User Authorized.",
-    //         user: user
-    //     });
-    // });
 };
 
 
@@ -201,4 +199,4 @@ const updateUser = (req,res) => {
     }
 };
 
-export {getUser, registerUser, loginUser, currentUser, deleteUser, updateUser};
+export {getUser, registerUser, loginUser, logoutUser, currentUser, deleteUser, updateUser};
